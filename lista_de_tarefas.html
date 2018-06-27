@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lista de Tarefas</title>
+<link rel="stylesheet" href="jquery-ui.css">
+<script src="jquery.js"></script>
+<script src="jquery-ui.js"></script>
+<style>
+	#conteudo
+	{
+		width: 800px;
+		height: 550px;
+		margin: 80px auto;
+		border: 2px solid rgb(66, 140, 244);
+	}
+	h1
+	{
+		color: rgb(66, 140, 244);
+		text-align: center;
+	}
+	#projetos
+	{
+		width: 750px;
+		height: 350px;
+		margin: 0px auto;
+	}
+	ol li
+	{
+		border: 1px dotted black;
+		cursor: pointer;
+		padding: 3px;
+		margin-bottom: 3px;
+	}
+	ol li: hover
+	{
+		background: #6eb7d6;
+	}
+	#btnProjeto
+	{
+		margin-left: 600px;
+		margin-bottom: 10px;
+	}
+	#btnTarefa
+	{
+		margin-left: 600px;
+		margin-top: 10px;
+	}
+</style>
+<script>
+	$(document).ready(function()
+	{
+		$("#projetos").tabs();
+		$("ul").sortable({axis:"x", containment:"#projetos"})
+		$("ol").sortable({axis:"y", containment:"#projetos"})
+		$("#btnProjeto").button().click(function()
+			{
+				$("#projetoDialog").dialog({width: 400, resizable: false, modal: true, buttons: 
+					{
+					"Adicionar Projeto":function()
+					{
+						var nomeProjeto = $("#novoProjeto").val();
+						$("<li><a href='#" + nomeProjeto + "'>" + nomeProjeto + "</a></li>").appendTo("#main");
+						$("<ol id='" + nomeProjeto + "'></ol>").appendTo("#projetos");
+						$("#projetos").tabs("refresh");
+						var countTabs = $("#projetos .ui-tabs-nav li").length;
+						$("#projetos").tabs("option", "active", countTabs - 1);
+						$("#novoProjeto").val("");
+						$(this).dialog("close");
+					},
+					"Cancelar":function()
+					{
+						$("#novoProjeto").val("");
+						$(this).dialog("close");
+					}
+				}});
+			});
+		$("#btnTarefa").button().click(function()
+			{
+				$("#tarefaDialog").dialog({width: 400, resizable: false, modal: true, buttons:
+					{
+					"Adicionar Tarefa":function()
+					{
+						var nomeTarefa = $("#novaTarefa").val();
+						var indexTabAtiva = $("#projetos").tabs("option", "active");
+						var idTabAtiva = $("#projetos> ul> li> a").eq(indexTabAtiva).attr("href");
+						idTabAtiva = idTabAtiva.slice(1);
+						$("ol#" + idTabAtiva).append("<li><input type='checkbox'>" + nomeTarefa + "</li>");
+						$("#novaTarefa").val("");
+						$(this).dialog("close");
+					},
+					"Cancelar": function()
+					{
+						$("#novaTarefa").val("");
+						$(this).dialog("close");
+					}
+				}});
+		});
+		$("ol>li>input[type=checkbox]").click(function()
+		{
+			if (this.checked) 
+			{
+				$(this).parent("refresh");
+				$(this).parent().remove();
+			}
+		});
+	});
+</script>
+</head>
+<body>
+	<div id="conteudo">
+		<h1>Lista de Tarefas</h1>
+		<button id="btnProjeto">Adicionar Projeto</button>
+		<div id="projetos">
+			<ul id="main">
+				<li><a href="#pessoal">Pessoal</a></li>
+				<li><a href="#profissional">Profissional</a></li>
+			</ul>
+			<ol id="pessoal">
+				<li><input type="checkbox">Ir ao supermercado</li>
+				<li><input type="checkbox">Pagar contas</li>
+				<li><input type="checkbox">Marcar consulta com médico</li>
+			</ol>
+			<ol id="profissional">
+				<li><input type="checkbox">Reunião às 2 horas</li>
+				<li><input type="checkbox">Ligar para o fornecedor</li>
+				<li><input type="checkbox">Terminar relatório</li>
+			</ol>
+		</div>
+		<div id="projetoDialog" title="Adicionar um Projeto" style="display: none;">
+			<label for="novoProjeto">Nome do Projeto: </label><input id="novoProjeto" type="text" />
+		</div>
+		<button id="btnTarefa">Adicionar Tarefa</button>
+		<div id="tarefaDialog" title="Adicionar uma Tarefa" style="display: none;">
+        	<label for="novaTarefa">Nome da Tarefa: </label><input id="novaTarefa" type="text"	/>
+        </div>﻿
+	</div>
+
+</body>
+</html>
